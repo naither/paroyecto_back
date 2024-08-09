@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videojuegos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .product { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        img { max-width: 100px; display: block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Productos de Videojuegos</h1>
+    <div id="products"></div>
+    <script>
+        async function fetchProducts() {
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/products');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const products = await response.json();
+                const productsContainer = document.getElementById('products');
+                productsContainer.innerHTML = products.map(product => `
+                    <div class="product">
+                        <img src="${product.image}" alt="${product.name}">
+                        <h2>${product.name}</h2>
+                        <p>Price: $${product.price}</p>
+                        <p>Broqueado: ${product.isBlock}</p>
+                        <button onclick="deleteProduct('${product.id}')">Delete</button>
+                        <button onclick="serchProduct('${product.id}')">Buscar</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        async function deleteProduct(id) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/v1/products/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    fetchProducts();
+                } else {
+                    console.error('Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+            }
+        }
+        //buscar producto por id mostrar  en una nueva ventana la id, imagen, nombre y precio del producto.
+      
+
+        async function serchProduct(id) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/v1/products/${id}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const product = await response.json();
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(`
+                    <h1>${product.id}</h1>
+                    <img src="${product.image}"<br>
+                    <h2>${product.name}</h2>
+                    <p>Price: $${product.price}</p>
+                    <p>Broqueado: ${product.isBlock}</p>
+                `);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        
+
+
+
+        fetchProducts();
+    </script>    
+</body>
+</html>
