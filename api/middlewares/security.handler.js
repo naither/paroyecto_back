@@ -5,7 +5,7 @@ function securityHandler(app) {
 }
 
 module.exports = securityHandler;
-/*//¿Para qué sirve este código?
+/*
 El propósito de este código es fortalecer la seguridad
  de una aplicación web de Node.js 
  al usar helmet. helmet configura 
